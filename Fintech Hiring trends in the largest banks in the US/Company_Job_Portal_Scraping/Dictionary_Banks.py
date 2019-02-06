@@ -20,11 +20,13 @@ browser = webdriver.Chrome(executable_path="D:\Program Files\ChromeGecko\chromed
 browser.get('http://careers.bankofamerica.com/search-jobs.aspx?c=united-states&r=us')
 PAGE_XPATH = '//*[@id="PlhContentWrapper_dglistview"]/tbody/tr[12]/td/a[2]'
 PAGE1_XPATH = '//*[@id="PlhContentWrapper_dglistview"]/tbody/tr[12]/td/a'
+CSV_PATH = r'../Documents_Top_100/TF_IDF.csv'
+LIST_ID = 1
 
 
 # Read the CSV File - 100 Words for Text Rank/Text Count/ TFIDF
 def read_csv():
-    data = pd.read_csv(r'A:\2nd Semester\Data Science\Fintech-Hiring-trends-in-the-largest-banks-in-the-US\Data\Keywords\word_count.csv', skiprows=1,
+    data = pd.read_csv(CSV_PATH, skiprows=1,
                        names=["keyWords", "id", "freq"])
     keyWords = data["keyWords"].tolist()
     count = 0
@@ -63,8 +65,8 @@ def get_job_desc(url):
 def boa_word_count(list_keywords, row):
     countPage = 1
     href_list = []
-    dict = {}
-    while countPage >= 1 and countPage < 800:
+    df_list = []
+    while countPage >= 1 and countPage < 3:
         link_count = 1
         for href in get_href():
             href_list.append(href)
@@ -84,7 +86,9 @@ def boa_word_count(list_keywords, row):
     filtered_sentence = []
     job_desc_word_freq = {}
     # Variable declaration ends
+    print(type(href_list[0]))
     for href in href_list:
+        dict_w={}
         job_desc = ""
         job_desc_div = get_job_desc(href)
         job_number = href[44:52]
@@ -106,70 +110,100 @@ def boa_word_count(list_keywords, row):
         # iteration in keyword list to find the count of key_words in job description
         for keywords in list_keywords:
             if type(keywords) == str:
-                freq = job_desc.count(keywords)
-                dict.update({keywords: freq})
-        row = company_word_count_to_excel('Bank of America', job_number, dict, href, row)
-    # job_desc_word_freq = sorted(job_desc_word_freq.items(), key=lambda kv: kv[1])
-    print(job_desc_word_freq)
+                freq = sum(1 for _ in re.finditer(r'\b%s\b' % re.escape(keywords), job_desc))
 
-    return row
+                #freq = job_desc.count(keywords)
+                dict_w.update({keywords: freq})
+        df = pd.DataFrame(dict_w, index=[href])
+        df['job_number'] = job_number
+        df['Institution'] = "Bank Of America"
+        df['URL Of Job Posting'] = [href]
+        df['List Id'] = [LIST_ID]
+
+        cols = df.columns.tolist()
+        cols = cols[100:104]+cols[0:100]
+        df = df[cols]
+
+        # df_list.append()
+        df_list.append(df)
+
+    df_res = pd.concat(df_list)
+    #row = company_word_count_to_excel('Bank of America', job_number, dict_w, href, row)
+    # job_desc_word_freq = sorted(job_desc_word_freq.items(), key=lambda kv: kv[1])
+    #print(job_desc_word_freq)
+
+    return df_res
 
 
 # JP Morgan - Final dictionary with job reference and word count
-def jp_morgan_word_count(list_keywords, row):
+def company_word_count_A():
     df_list = []
-    for pages in range(0, 7):
-        pages = pages * 100 + 1
-        for i in range(pages, pages + 99):  # Change the range for testing purpose
-            url = 'https://jobs.jpmorganchase.com/ListJobs/All/sortdesc-jobtitle/Page-' + str(i)
-            print('------------------######### PAGE : ' + str(i) + '##########---------------------')
-            req = requests.get(url)
-            soup = BeautifulSoup(req.content, 'html.parser')
-            links_with_text = []
-            for a in soup.find_all('a', href=True):
-                if a.text:
-                    links_with_text.append(a['href'])
-
-            # print(links_with_text)
-            r = re.compile('ShowJob.*')
-            newlist = filter(r.search, links_with_text)
-            a = []
-            for i in newlist:
-                a.append('https://jobs.jpmorganchase.com' + str(i))
+    a = []
+    for i in range(1,2):
+        url = 'https://jobs.jpmorganchase.com/ListJobs/All/sortdesc-jobtitle/Page-' + str(i)
+        print('------------------######### PAGE : ' + str(i) + '##########---------------------')
+        req = requests.get(url)
+        soup = BeautifulSoup(req.content, 'html.parser')
+        links_with_text = []
+        for a in soup.find_all('a', href=True):
+            if a.text:
+                links_with_text.append(a['href'])
+        # print(links_with_text)
+        r = re.compile('ShowJob.*')
+        newlist = filter(r.search, links_with_text)
+        for i in newlist:
+            a.append('https://jobs.jpmorganchase.com' + str(i))
             a = list(set(a))
-            # print(len(a))
-            for i in a:
-                job_id_list = []
-                url = i
-                # print('------------------###################---------------------')
-                req = requests.get(url)
-                soup = BeautifulSoup(req.content, 'html.parser')
-                # a = soup.findAll('div',{'class':'desc'})
-                a = [el.get_text() for el in soup.find_all('div', attrs={"class": 'desc'})]
-                b = soup.find_all('div', {'class': 'req'})
-                for x in b:
-                    text_jobid = x.get_text()
-                    text_jobid = text_jobid[7:]
-                    job_id_list.append(text_jobid)
-                # print(a)
-                list_word = list_keywords
-                # print(list_word)
-                str_list = ''.join(a)
-                str_list = str_list.lower()
-                remove_special_chars = str_list.translate(
-                    {ord(c): '' for c in "\.•{2,}!@#$%^&*()[]\\{};:,./<>?\|`~-=_+\"\“\”"})
-                f_list = remove_special_chars.split()
-                wordfreq = {}
-                dict_words = {}
-                for i in list_word:
-                    freq = remove_special_chars.count(i)
-                    dict_words.update({i: freq})
-                row = company_word_count_to_excel('J P Morgan', text_jobid, dict_words, url, row)
+    return a
 
+def jp_morgan_word_count(list_links, list_keywords, row):
+   for i in list_links:
+       job_id_list = []
+       url = i
+       # print('------------------###################---------------------')
+       req = requests.get(url)
+       soup = BeautifulSoup(req.content, 'html.parser')
+       # a = soup.findAll('div',{'class':'desc'})
+       a = [el.get_text() for el in soup.find_all('div', attrs={"class": 'desc'})]
+       b = soup.find_all('div', {'class':'req'})
+       for x in b:
+           text_jobid = x.get_text()
+           text_jobid = text_jobid[7:]
+           job_id_list.append(text_jobid)
+               # print(a)
+           list_word = list_keywords
+           # print(list_word)
+           str_list = ''.join(a)
+           str_list = str_list.lower()
+           remove_special_chars = str_list.translate(
+               {ord(c): '' for c in "\.•{2,}!@#$%^&*()[]\\{};:,./<>?\|`~-=_+\"\“\”"})
+           f_list = remove_special_chars.split()
+           wordfreq = dict((el,0) for el in list_word)
+
+           for i in list_word:
+               for j in f_list:
+                   if i == j:
+                       if i not in wordfreq:
+                           wordfreq[i] = 0
+                       wordfreq[i] += 1
+           #company_word_count_to_excel("JP Morgan", text_jobid, wordfreq, url, row)
+       df = pd.DataFrame(wordfreq, index=[url])
+       df['job_number'] = job_id_list
+       df['Institution'] = "JP Morgan"
+       df['URL Of Job Posting'] = [url]
+       df['List Id'] = [LIST_ID]
+
+       cols = df.columns.tolist()
+       cols = cols[100:104] + cols[0:100]
+       df = df[cols]
+       df_list.append(df)
+   df_res = pd.concat(df_list)
+   print(wordfreq)
+   return df_res
 
 # Create the excel and write the headers in it
 def write_excel(list_keywords):
-    workbook = xlsxwriter.Workbook(r'A:\2nd Semester\Data Science\Fintech-Hiring-trends-in-the-largest-banks-in-the-US\Data\Scapped_files\wordCountScrape.xlsx', {'strings_to_urls': False})
+    workbook = xlsxwriter.Workbook(r'..\Company_Word_Scrapped_Count\TextRankScrape.xlsx', {'strings_to_urls': False})
     worksheet = workbook.add_worksheet()
     row = 0
     column = 4
@@ -198,9 +232,9 @@ def company_word_count_to_excel(company, job_number, dicti, url, row):
 
 # Function to Convert Excel to CSV for both companies
 def csv_from_excel():
-    wb = xlrd.open_workbook(r'A:\2nd Semester\Data Science\Fintech-Hiring-trends-in-the-largest-banks-in-the-US\Data\Scapped_files\wordCountScrape.xlsx')
+    wb = xlrd.open_workbook(r'..\Company_Word_Scrapped_Count\TextRankScrape.xlsx')
     sh = wb.sheet_by_name('Sheet1')
-    your_csv_file = open(r'A:\2nd Semester\Data Science\Fintech-Hiring-trends-in-the-largest-banks-in-the-US\Data\Scapped_files\wordCountScrape_CSV.csv', 'w')
+    your_csv_file = open(r'..\Company_Word_Scrapped_Count\TextRankScrape.csv', 'w')
     wr = csv.writer(your_csv_file, quoting=csv.QUOTE_ALL)
 
     for rownum in range(sh.nrows):
@@ -214,15 +248,27 @@ if __name__ == '__main__':
     try:
         # Read the CSV file to get the list of keywords
         list_keywords = read_csv()
+        print(list_keywords)
         # Calling the write excel method to prepare the excel
         workbook, worksheet = write_excel(list_keywords)
 
         print("Scrapping for BOA")
-        row = boa_word_count(list_keywords, row=1)
+        df_boa = boa_word_count(list_keywords, row=1)
         print("Scrapping for J.P Morgan")
-        jp_morgan_word_count(list_keywords, row)
-    except:
-        print("Exception")
+        list_links = []
+        list_links = company_word_count_A()
+        df_list = []
+        list_links.remove('SmashFly')
+
+        print('=======================================')
+        df_JP= jp_morgan_word_count(list_links, list_keywords, 1)
+        print(df_boa.head())
+        print(list(df_boa))
+        print(list(df_JP.head()))
+        df_both = pd.concat([df_JP,df_boa])
+        df_both.to_csv(r'..\Company_Word_Scrapped_Count\TfIDFScrape.csv')
+    # #except:
+    #     print("Exception")
     finally:
         workbook.close()
         # Converting Excel to CSV

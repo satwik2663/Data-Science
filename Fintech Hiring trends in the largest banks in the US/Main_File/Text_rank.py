@@ -20,5 +20,5 @@ addstopwords = ' '.join(stopwordsadd)
 keywords = keywords.keywords(cleantext, ratio=0.2, words=None, language="english", split=False, scores=False,
                              deaccent=False, additional_stopwords=addstopwords)
 keywordsDescOrder = keywords.split('\n')
-keywordsdf = pd.DataFrame({'word': keywordsDescOrder})
-keywordsTxtRank_DescOrderCSV = keywordsdf.to_csv(r'../Documents_Top_100/Text_Rank.csv')
+keywordsdf = pd.DataFrame({'keyWords': keywordsDescOrder})
+keywordsTxtRank_DescOrderCSV = keywordsdf.to_csv(r'../Documents_Top_100/Text_Rank.csv',index=None)
