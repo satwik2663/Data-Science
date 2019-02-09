@@ -12,11 +12,5 @@ trends in the top financial institutions in the US.<br>
 The goal in this case study is to conduct a study on the job openings in the top US Banks in the United States and analyze trends in the
 industry particularly in the area of Fintech.
 
-## Fintech Functionalities In Banking Ecosystem
-![Alt text](http://full/path/to/img.jpg "Optional title")
-## Fintech Technology Trends
-![Alt text](http://full/path/to/img.jpg "Optional title")
-## Fintech Concentration Worldwide
-![Alt text](https://datawrapper.dwcdn.net/7VeLU/1/")
 
 
