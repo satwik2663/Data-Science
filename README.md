@@ -13,9 +13,10 @@ The goal in this case study is to conduct a study on the job openings in the top
 industry particularly in the area of Fintech.
 
 ## Fintech Functionalities In Banking Ecosystem
-![ScreenShot](C:\Users\91880\Desktop\New folder\C1.jpg)
+![Alt text](http://full/path/to/img.jpg "Optional title")
 ## Fintech Technology Trends
-![ScreenShot](C:\Users\91880\Desktop\New folder\C2.jpg)
+![Alt text](http://full/path/to/img.jpg "Optional title")
 ## Fintech Concentration Worldwide
-![ScreenShot](C:\Users\91880\Desktop\New folder\C3.jpg)
+![Alt text](https://datawrapper.dwcdn.net/7VeLU/1/")
+
 
