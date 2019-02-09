@@ -11,3 +11,11 @@ job openings were in the technology section. Things are fast evolving and as we 
 trends in the top financial institutions in the US.<br>
 The goal in this case study is to conduct a study on the job openings in the top US Banks in the United States and analyze trends in the
 industry particularly in the area of Fintech.
+
+## Fintech Functionalities In Banking Ecosystem
+![ScreenShot](C:\Users\91880\Desktop\New folder\C1.jpg)
+## Fintech Technology Trends
+![ScreenShot](C:\Users\91880\Desktop\New folder\C2.jpg)
+## Fintech Concentration Worldwide
+![ScreenShot](C:\Users\91880\Desktop\New folder\C3.jpg)
+
