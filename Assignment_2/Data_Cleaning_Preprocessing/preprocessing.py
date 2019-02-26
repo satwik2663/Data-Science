@@ -16,8 +16,7 @@ def data_cleaning():
     lemmatized_description = []
 
     # Getting the file to Amazon S3
-    aws_id = 'AKIAIBIGY3IWD3P7RAHA'
-    aws_secret = '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'
+
 
     s3 = boto3.client('s3', aws_access_key_id=aws_id, aws_secret_access_key=aws_secret)
     obj = s3.get_object(Bucket='data-science-team1', Key='all_job_posting.csv')
