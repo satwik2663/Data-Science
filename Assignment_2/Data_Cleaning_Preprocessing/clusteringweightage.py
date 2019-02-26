@@ -13,9 +13,7 @@ nltk.download('punkt')
 nltk.download('wordnet')
 
 
-def clustering_count():
-    aws_id = 'AKIAIBIGY3IWD3P7RAHA'
-    aws_secret = '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'
+def clustering_cou
 
     # Reading the files from Amazon S3 - Word CLuster
     s3 = boto3.client('s3', aws_access_key_id=aws_id, aws_secret_access_key=aws_secret)
