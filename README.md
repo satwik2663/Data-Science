@@ -15,3 +15,11 @@ industry particularly in the area of Fintech.
 
 
 Claat document: https://codelabs-preview.appspot.com/?file_id=1NR6l3ZGy0wKECCm0dmWSiicX5lNx9qqtxfjH_RIPRCc#3
+
+<b> ASSIGNMENT 2: </b>
+
+To run the docker image command:-
+
+docker pull satwikkashyap/hiring_trends_in_fintech_with_airflow_pipelining
+docker run satwikkashyap/hiring_trends_in_fintech_with_airflow_pipelining
+Report : https://codelabs-preview.appspot.com/?file_id=1jV9f9iUal9JTx-CveZvDc-wbgjKyLe8HF_s0nqZbF2g#0
