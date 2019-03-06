@@ -2,6 +2,7 @@
 
 ## Project 1: Fintech Hiring trends in the largest banks
 
+<b> ASSIGNMENT 1: </b>
 Banks in the US are changing rapidly. With rapidly changing business models and the technological revolution has fueled the growth of 
 innovative business models and technologies collectively known as Fintech. <br> With changing demographics, automation efforts and demand 
 for new products and services, large financial institutions are realizing the power of technologies like data science, AI, cloud 
